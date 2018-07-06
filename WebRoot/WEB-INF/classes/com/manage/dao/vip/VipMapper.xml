@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.vip.VipMapper">
+	
+	<select id="getVipInfo" resultType="Vip">
+		select * from vip
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="getVipInfoById" resultType="Vip">
+		select * from vip where id=#{id}
+	</select>
+	
+	<!-- 新增vip-->
+	<insert id="insertVip" >
+		insert into vip (level, discount, cost)
+        values (#{level,jdbcType=VARCHAR}, #{discount,jdbcType=INTEGER}, #{cost,jdbcType=VARCHAR})
+	</insert>
+
+	<!--根据主键删除一条vip数据 -->
+    <delete id="deleteVipById" parameterType="java.lang.Integer">
+        delete from vip
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条Vip数据 -->
+    <update id="updateVip">
+		update vip 
+		<set>
+            <if test="level != null">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="discount != null">
+                discount = #{discount,jdbcType=INTEGER},
+            </if>
+            <if test="cost != null">
+                cost = #{cost,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

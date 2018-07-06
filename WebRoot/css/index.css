@@ -1,0 +1,180 @@
+*{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-family: 'Microsoft YaHei';
+}
+#main{
+    width:100%;
+    height: 100%;
+    background-color: #f2e3c4;
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+}
+#main #left-body{
+    width:225px;
+    height: 100%;
+    background: #333;
+    display: flex;
+    flex-direction: column;
+}
+#left-body #sys-name{
+    width:100%;
+    height: 65px;
+    line-height: 65px;
+    background-color: #484848;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    border-bottom: #323232 solid 1px;
+}
+#left-body #admin-info{
+    width:100%;
+    height: 75px;
+    background-color: #414141; 
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-around;
+    color: white;
+}
+#left-body #admin-info .head-img{
+    width:50px;
+    height: 50px;
+}
+#left-body #admin-info .head-img img{
+    width:50px;
+    height: 50px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+#left-body #admin-info .other-info{
+    width:30px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#left-body #home-button{
+    width:100%;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-bottom: #323232 solid 1px;
+}
+#left-body #home-button div{
+    width: 75%;
+    height:30px;
+    text-align: center;
+    line-height: 30px;
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bolder;
+
+}
+#left-body #menu{
+    background-color: #414141;
+    height:100%;
+    color:white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+#left-body #menu .menu-nav{
+    width:100%;
+}
+#left-body #menu .menu-dir{
+    height:45px;
+    line-height: 45px;
+    padding:0 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+#left-body #menu .menu-folder{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+#left-body #menu .menu-folder span{
+    display: block;
+    width:100%;
+    height:45px;
+    line-height: 45px;
+    text-align: center;
+    background-color: #333;
+    cursor: pointer;
+}
+#main #right-body{
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+#right-body #opa-nav{
+    width:100%;
+    height: 65px;
+    line-height: 65px;
+    background-color: #393D49; 
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+#right-body #tab-nav{
+    width:100%;
+    height: 30px;
+    line-height: 30px;
+    background-color: #414141;
+    color:#999;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+#right-body #tab-nav .tab-li{
+    cursor: pointer;
+    padding: 0px 7px;
+    border-right:solid #aaa 1px;
+}
+.tab-noselect{
+    background-color: #333;
+    color:white; 
+}
+.tab-onselect{
+    background-color: #eee;
+    color: #333;
+}
+.div-noactive{
+    display: none;
+}
+#contents{
+    width:100%;
+    height:100%;
+}
+#contents .panel-div{
+	max-width:100%;
+    height:100%;
+}
+#contents .content-panel{
+    height:100%;
+    display:flex;
+    flex-direction: column;
+
+}
+#contents .content-panel .content-panel-body{
+    width:100%;
+    height:100%;
+    background-color: white;
+}
+#contents .content-panel-footer{
+    padding: 2px 5px;
+    background-color: #efefef;
+    height: 45px;
+}
+#contents .content-panel-footer ul{
+    float:right;
+    margin:5px 20px;
+}

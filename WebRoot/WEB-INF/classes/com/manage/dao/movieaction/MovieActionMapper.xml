@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.movieaction.MovieActionMapper">
+	<resultMap type="movieaction" id="MovieActionInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="movie_id" column="movie_id" />  
+        <result property="hall_id" column="hall_id" />  
+        <result property="actionTime" column="action_time" /> 
+        <result property="selectedSite" column="selected_site" /> 
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="movie" ofType="Movie">
+			<id property="id" column="id" />  
+            <result property="name" column="name" />
+            <result property="publish_time" column="publish_time" />
+            <result property="ticket_price" column="ticket_price" />  
+		</collection>
+        <collection property="hall" ofType="Hall">
+            <id property="id" column="id" />  
+            <result property="hall_name" column="hall_name" />
+            <result property="site_num" column="site_num" />
+            <result property="cinema_id" column="cinema_id" />  
+            <collection property="cinema" ofType="Cinema">
+            	<id property="id" column="id" />  
+            	<result property="cinema_name" column="cinema_name" />
+            </collection>
+        </collection>
+	</resultMap>
+
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="getMovieActionInfo" resultMap="MovieActionInfoResultMap" parameterType="Map">
+		SELECT * FROM movieaction ma LEFT JOIN movie m ON ma.movie_id = m.id LEFT JOIN (
+        SELECT hall.id, hall.hall_name, hall.site_num, hall.cinema_id, cinema.cinema_name from hall LEFT JOIN cinema on hall.cinema_id=cinema.id
+        ) h ON ma.hall_id=h.id
+		 <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+	</select>
+	
+	<!-- 新增-->
+	<insert id="insertMovieAction" >
+		insert into movieaction 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movie_id != null">
+                movie_id,
+            </if>
+            <if test="hall_id != null">
+                hall_id,
+            </if>
+            <if test="actionTime != null">
+                action_time,
+            </if>
+            <if test="selectedSite != null">
+                selected_site,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movie_id != null">
+                #{movie_id},
+            </if>
+            <if test="hall_id != null">
+                #{hall_id},
+            </if>
+            <if test="actionTime != null">
+                #{actionTime},
+            </if>
+            <if test="selectedSite != null">
+                #{selectedSite},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+	</insert>
+
+	<!--根据主键删除一条数据 -->
+    <delete id="deleteMovieActionById" parameterType="java.lang.Integer">
+        delete from movieaction
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条数据 -->
+    <update id="updateMovie">
+		update movieaction
+		<set>
+            <if test="movie_id != null">
+                movie_id = #{movie_id,jdbcType=INTEGER},
+            </if>
+            <if test="hall_id != null">
+                hall_id = #{hall_id,jdbcType=INTEGER},
+            </if>
+            <if test="actionTime != null">
+                action_time = #{actionTime,jdbcType=VARCHAR},
+            </if>
+            <if test="selectedSite != null">
+                selected_site = #{selectedSite,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

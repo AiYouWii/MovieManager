@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.person.PersonMapper">
+	<resultMap type="person" id="PersonInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="user" column="user" />  
+        <result property="pass" column="pass" />  
+        <result property="username" column="username" /> 
+        <result property="sex" column="sex" /> 
+        <result property="createTime" column="createTime" />
+        <result property="updateTime" column="updateTime" />
+        <result property="vip_died_line" column="vip_died_line" />
+        <result property="vip_id" column="vip_id" />
+        <association  property="vip" javaType="Vip">
+			<id property="id" column="id" />  
+            <result property="level" column="level" />  
+            <result property="discount" column="discount" />  
+            <result property="cost" column="cost" />  
+		</association >
+	</resultMap>
+
+	<!-- 查询用户记录总数 -->
+    <select id="selectUserCount" resultType="int">
+        select count(*) from person
+    </select>
+	
+	<!-- 登录操作 -->
+	<select id="VipLogin" resultMap="PersonInfoResultMap">
+		select * from person
+		<where>
+			<if test="user!=null">user=#{user}</if>
+			<if test="pass!=null">and pass=#{pass}</if>
+		</where>
+	</select>
+	
+	<!-- 异步查询会员是否存在操作 -->
+	<select id="checkUserIsExist" resultMap="PersonInfoResultMap">
+		select * from person
+		<where>
+			<if test="user!=null">user=#{user}</if>
+		</where>
+	</select>
+	
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="getUserInfo" resultMap="PersonInfoResultMap" parameterType="Map">
+		select * from person p left join vip v on p.vip_id=v.id
+		 <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+	</select>
+	
+	<!-- 根据用户的id获取用户的具体信息 -->
+	<select id="getUserInfoById" resultMap="PersonInfoResultMap">
+		select * from person p,vip v where p.vip_id=v.id and p.id=#{id}
+	</select>
+	
+	<!-- 新增用户-->
+	<insert id="insertPerson" >
+		insert into person 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user != null">
+                user,
+            </if>
+            <if test="pass != null">
+                pass,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+            <if test="vip_id != null">
+                vip_id,
+            </if>
+            <if test="vip_died_line != null">
+                vip_died_line,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user != null">
+                #{user},
+            </if>
+            <if test="pass != null">
+                #{pass},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="vip_id != null">
+                #{vip_id},
+            </if>
+            <if test="vip_died_line != null">
+                #{vip_died_line},
+            </if>
+        </trim>
+	</insert>
+
+	<!--根据主键删除一条用户数据 -->
+    <delete id="deletePersonById" parameterType="java.lang.Integer">
+        delete from person
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条用户数据 -->
+    <update id="updatePerson">
+		update person 
+		<set>
+            <if test="username != null">
+                userName = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="pass != null">
+                pass = #{pass,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.publish.PublishAreaMapper">
+	
+	<select id="getPublishAreaInfo" resultType="PublishArea">
+		select * from publisharea
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 新增发布地区-->
+	<insert id="insertPublishArea" >
+		insert into publisharea (area, createtime, updatetime)
+        values (#{area,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+	</insert>
+
+	<!--根据主键删除一条发布地区数据 -->
+    <delete id="deletePublishAreaById" parameterType="java.lang.Integer">
+        delete from publisharea
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条发布地区数据 -->
+    <update id="updatePublishArea">
+		update publisharea 
+		<set>
+            <if test="area != null">
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.movie.MovieMapper">
+	<resultMap type="movie" id="MovieInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="name" column="name" />  
+        <result property="publish_time" column="publish_time" />  
+        <result property="long_time" column="long_time" /> 
+        <result property="img" column="img" /> 
+        <result property="info" column="info" />
+        <result property="ticket_price" column="ticket_price" />
+        <result property="area_id" column="area_id" />
+        <result property="type_id" column="type_id" />
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="publishArea" ofType="PublishArea">
+			<id property="id" column="id" />  
+            <result property="area" column="area" /> 
+		</collection>
+        <collection property="movieType" ofType="MovieType">
+            <id property="id" column="id" />  
+            <result property="type" column="type" /> 
+        </collection>
+	</resultMap>
+
+	<!-- 查询用户记录总数 -->
+    <select id="selectMovieCount" resultType="int">
+        select count(*) from movie
+    </select>
+	
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="getMovieInfo" resultMap="MovieInfoResultMap" parameterType="Map">
+		select * from movie m left join publisharea p on m.area_id=p.id left join movietype t on m.type_id=t.id
+		 <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+	</select>
+	
+	<!-- 根据用户的id获取用户的具体信息 -->
+	<select id="getMovieInfoById" resultMap="MovieInfoResultMap">
+		select * from movie m left join publisharea p on m.area_id=p.id left join movietype t on m.type_id=t.id where m.id=#{id}
+	</select>
+	
+	<!-- 新增用户-->
+	<insert id="insertMovie" >
+		insert into movie 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="publish_time != null">
+                publish_time,
+            </if>
+            <if test="long_time != null">
+                long_time,
+            </if>
+            <if test="area_id != null">
+                area_id,
+            </if>
+            <if test="type_id != null">
+                type_id,
+            </if>
+            <if test="img != null">
+                img,
+            </if>
+            <if test="info != null">
+                info,
+            </if>
+            <if test="ticket_price != null">
+                ticket_price,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="publish_time != null">
+                #{publish_time},
+            </if>
+            <if test="long_time != null">
+                #{long_time},
+            </if>
+            <if test="area_id != null">
+                #{area_id},
+            </if>
+            <if test="type_id != null">
+                #{type_id},
+            </if>
+            <if test="img != null">
+                #{img},
+            </if>
+            <if test="info != null">
+                #{info},
+            </if>
+            <if test="ticket_price != null">
+                #{ticket_price},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+	</insert>
+
+	<!--根据主键删除一条用户数据 -->
+    <delete id="deleteMovieById" parameterType="java.lang.Integer">
+        delete from movie
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条用户数据 -->
+    <update id="updateMovie">
+		update movie 
+		<set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="publish_time != null">
+                publish_time = #{publish_time,jdbcType=DATE},
+            </if>
+            <if test="long_time != null">
+                long_time = #{long_time,jdbcType=INTEGER},
+            </if>
+            <if test="area_id != null">
+                area_id = #{area_id,jdbcType=INTEGER},
+            </if>
+            <if test="type_id != null">
+                type_id = #{type_id,jdbcType=INTEGER},
+            </if>
+            <if test="img != null">
+                img = #{img,jdbcType=VARCHAR},
+            </if>
+            <if test="info != null">
+                info = #{info,jdbcType=VARCHAR},
+            </if>
+            <if test="ticket_price != null">
+                ticket_price = #{ticket_price,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

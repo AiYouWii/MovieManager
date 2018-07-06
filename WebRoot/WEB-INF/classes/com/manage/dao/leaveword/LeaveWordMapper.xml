@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.leaveword.LeaveWordMapper">
+	
+	<select id="getLeaveWordInfo" resultType="LeaveWord">
+		select * from LeaveWord
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<!-- 新增-->
+	<insert id="insertLeaveWord" >
+		insert into LeaveWord (user_id, user_name, content, createtime, updatetime)
+        values (#{user_id,jdbcType=INTEGER}, #{user_name,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+	</insert> 
+
+	<!--根据主键删除一条数据 -->
+    <delete id="deleteLeaveWordById" parameterType="java.lang.Integer">
+        delete from LeaveWord
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条数据 -->
+    <update id="updateLeaveWord">
+		update LeaveWord 
+		<set>
+            <if test="content != null">
+                content = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

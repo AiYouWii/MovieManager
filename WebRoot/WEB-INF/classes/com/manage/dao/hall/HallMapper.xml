@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.hall.HallMapper">
+	<resultMap type="hall" id="HallResultMap">  
+		<id property="id" column="id" />
+		<result property="hall_name" column="hall_name" />  
+        <result property="site_num" column="site_num" />  
+        <result property="cinema_id" column="cinema_id" /> 
+        <result property="createTime" column="createtime" /> 
+        <result property="updateTime" column="updatetime" />  
+        <association property="cinema" javaType="cinema">
+			<id property="id" column="id" />  
+            <result property="cinema_name" column="cinema_name" />  
+            <result property="address" column="address" /> 
+		</association>
+	</resultMap>
+
+	
+	<select id="getHallInfo" resultMap="HallResultMap" parameterType="Map">
+		select * from hall h left join cinema c on h.cinema_id=c.id
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	
+	<!-- 新增影厅-->
+	<insert id="insertHall" >
+		insert into hall 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hall_name != null">
+                hall_name,
+            </if>
+            <if test="site_num != null">
+                site_num,
+            </if>
+            <if test="cinema_id != null">
+                cinema_id,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hall_name != null">
+                #{hall_name},
+            </if>
+            <if test="site_num != null">
+                #{site_num},
+            </if>
+            <if test="cinema_id != null">
+                #{cinema_id},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+	</insert>
+
+	<!--根据主键删除一条影厅数据 -->
+    <delete id="deleteHallById" parameterType="java.lang.Integer">
+        delete from hall
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条影厅数据 -->
+    <update id="updateHall">
+		update hall 
+		<set>
+            <if test="hall_name != null">
+                hall_name = #{hall_name,jdbcType=VARCHAR},
+            </if>
+            <if test="site_num != null">
+                site_num = #{site_num,jdbcType=VARCHAR},
+            </if>
+            <if test="cinema_id != null">
+                cinema_id = #{cinema_id,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=INTEGER},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

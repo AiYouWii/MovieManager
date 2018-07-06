@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.home.HomeMapper">
+	<resultMap type="movie" id="MovieInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="name" column="name" />  
+        <result property="publish_time" column="publish_time" />  
+        <result property="long_time" column="long_time" /> 
+        <result property="img" column="img" /> 
+        <result property="info" column="info" />
+        <result property="ticket_price" column="ticket_price" />
+        <result property="area_id" column="area_id" />
+        <result property="type_id" column="type_id" />
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="publishArea" ofType="PublishArea">
+			<id property="id" column="id" />  
+            <result property="area" column="area" /> 
+		</collection>
+        <collection property="movieType" ofType="MovieType">
+            <id property="id" column="id" />  
+            <result property="type" column="type" /> 
+        </collection>
+	</resultMap>
+	<resultMap type="comment" id="CommentInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="user_id" column="user_id" />  
+        <result property="movie_id" column="movie_id" />  
+        <result property="content" column="content" /> 
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="person" ofType="Person">
+            <id property="id" column="id" />  
+            <result property="user" column="user" />
+            <result property="username" column="username" /> 
+        </collection>
+	</resultMap>
+	
+	<resultMap type="movieaction" id="MovieActionInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="movie_id" column="movie_id" />  
+        <result property="hall_id" column="hall_id" />  
+        <result property="actionTime" column="action_time" /> 
+        <result property="selectedSite" column="selected_site" /> 
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="movie" ofType="Movie">
+			<id property="id" column="id" />  
+            <result property="name" column="name" />
+            <result property="publish_time" column="publish_time" />
+            <result property="ticket_price" column="ticket_price" />  
+		</collection>
+        <collection property="hall" ofType="Hall">
+            <id property="id" column="id" />  
+            <result property="hall_name" column="hall_name" />
+            <result property="site_num" column="site_num" />
+            <result property="cinema_id" column="cinema_id" />  
+            <collection property="cinema" ofType="Cinema">
+            	<id property="id" column="id" />  
+            	<result property="cinema_name" column="cinema_name" />
+            </collection>
+        </collection>
+	</resultMap>
+	
+	<resultMap type="person" id="PersonInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="user" column="user" />  
+        <result property="pass" column="pass" />  
+        <result property="username" column="username" /> 
+        <result property="sex" column="sex" /> 
+        <result property="createTime" column="createTime" />
+        <result property="updateTime" column="updateTime" />
+        <result property="vip_died_line" column="vip_died_line" />
+        <result property="vip_id" column="vip_id" />
+        <association  property="vip" javaType="Vip">
+			<id property="id" column="id" />  
+            <result property="level" column="level" />  
+            <result property="discount" column="discount" />  
+            <result property="cost" column="cost" />  
+		</association >
+	</resultMap>
+	<select id="getMovieInfo" resultType="Movie">
+	 select * from Movie
+	</select>
+	
+	<!-- 登录操作 -->
+	<select id="userLogin" resultMap="PersonInfoResultMap">
+		select * from person p left join vip v on p.vip_id=v.id
+		<where>
+			<if test="user!=null">user=#{user}</if>
+			<if test="pass!=null">and pass=#{pass}</if>
+		</where>
+	</select>
+	
+	<select id="checkPhone" resultType="Person">
+		select * from person 
+		<where>
+			<if test="user!=null">user=#{user}</if>
+		</where>
+	</select>
+	
+	<!-- 新增用户-->
+	<insert id="register" >
+		insert into person 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user != null">
+                user,
+            </if>
+            <if test="pass != null">
+                pass,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+            <if test="vip_id != null">
+                vip_id,
+            </if>
+            <if test="vip_died_line != null">
+                vip_died_line,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user != null">
+                #{user},
+            </if>
+            <if test="pass != null">
+                #{pass},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="vip_id != null">
+                #{vip_id},
+            </if>
+            <if test="vip_died_line != null">
+                #{vip_died_line},
+            </if>
+        </trim>
+	</insert>
+	
+	<select id="getCommentByMId" resultMap="CommentInfoResultMap">
+	 select * from Comment c left join person p on c.user_id=p.id where c.movie_id = #{id,jdbcType=INTEGER} order by c.createtime
+	</select>
+	
+	<!-- 根据用户的id获取具体信息 -->
+	<select id="getMovieInfoById" resultMap="MovieInfoResultMap">
+		select * from movie m left join publisharea p on m.area_id=p.id left join movietype t on m.type_id=t.id where m.id=#{id}
+	</select>
+	
+	<select id="getMovieActionByMId" resultMap="MovieActionInfoResultMap">
+		SELECT * FROM movieaction ma LEFT JOIN movie m ON ma.movie_id = m.id LEFT JOIN (
+        SELECT hall.id, hall.hall_name, hall.site_num, hall.cinema_id, cinema.cinema_name from hall LEFT JOIN cinema on hall.cinema_id=cinema.id
+        ) h ON ma.hall_id=h.id where ma.movie_id=#{id}
+	</select>
+</mapper>

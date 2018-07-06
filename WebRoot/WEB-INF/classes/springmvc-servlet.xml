@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+     
+    <!-- 注册组件扫描器 -->
+    <context:component-scan base-package="com.manage.controller"></context:component-scan>
+    
+    
+    <mvc:annotation-driven>
+    	 <mvc:message-converters>
+    	 	<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+    	 		<property name="supportedMediaTypes">
+    	 			<list>
+    	 			    <value>application/json;charset=utf-8</value>
+    	 			</list>
+    	 		</property>
+    	 	</bean>
+    	 </mvc:message-converters>
+    </mvc:annotation-driven>
+    
+   <mvc:resources mapping="/statics/**" location="/statics/" />
+    <mvc:resources mapping="/fonts/**" location="/fonts/" /> 
+    <mvc:resources mapping="/css/**" location="/css/" /> 
+    <mvc:resources mapping="/js/**" location="/js/" /> 
+    <mvc:resources mapping="/other/**" location="/other/" /> 
+    <mvc:resources mapping="/public/**" location="/public/" /> 
+    <!-- 完成视图的对应 -->
+	<!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+		<property name="prefix" value="/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean> 
+	<!-- 配置拦截器 -->
+	<!-- <mvc:interceptors>
+	    <mvc:interceptor>
+	    	<mvc:mapping path="/user/sys/**"/>
+	    	<bean class="cn.smbms.interceptor.SysInterceptor"></bean>
+	    </mvc:interceptor>
+	</mvc:interceptors>  -->
+	
+    <!--  全局异常处理 -->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.RuntimeException">error</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- 启动Springmvc注解驱动 -->
+	 <mvc:annotation-driven/>
+	 <!-- 返回json 方法一 需要导入 fastjson.jar包 -->  
+	<mvc:annotation-driven>
+        <mvc:message-converters register-defaults="false">
+            <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+            <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <!-- 这里顺序不能反，一定先写text/html,不然ie下出现下载提示 -->
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+  <!--   配置MultipartResolver，用于上传文件，使用spring的CommonsMultipartResolver   -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+   		 <property name="maxUploadSize" value="5000000000"/>
+   		 <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+    
+</beans>

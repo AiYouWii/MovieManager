@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.comment.CommentMapper">
+	<resultMap type="comment" id="CommentInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="user_id" column="user_id" />  
+        <result property="movie_id" column="movie_id" />  
+        <result property="content" column="content" /> 
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="movie" ofType="Movie">
+			<id property="id" column="id" />  
+            <result property="name" column="name" /> 
+		</collection>
+        <collection property="person" ofType="Person">
+            <id property="id" column="id" />  
+            <result property="user" column="user" />
+            <result property="username" column="username" /> 
+        </collection>
+	</resultMap>
+
+	
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="getCommentInfo" resultMap="CommentInfoResultMap" parameterType="Map">
+		SELECT * FROM COMMENT c
+		LEFT JOIN person p ON c.user_id = p.id
+		LEFT JOIN movie m ON c.movie_id = m.id
+		 <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+	</select>
+	
+	
+	<!-- 新增-->
+	<insert id="insertComment" >
+		insert into comment 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="movie_id != null">
+                movie_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user_id != null">
+                #{user_id},
+            </if>
+            <if test="movie_id != null">
+                #{movie_id},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+	</insert>
+
+	<!--根据主键删除一条数据 -->
+    <delete id="deleteCommentById" parameterType="java.lang.Integer">
+        delete from comment
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条数据 -->
+    <update id="updateComment">
+		update comment 
+		<set>
+            <if test="user_id != null">
+                user_id = #{user_id,jdbcType=VARCHAR},
+            </if>
+            <if test="movie_id != null">
+                movie_id = #{movie_id,jdbcType=DATE},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+            
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.dao.ticket.TicketMapper">
+	<resultMap type="ticket" id="TicketInfoResultMap">  
+		<id property="id" column="id" />
+		<result property="orderNum" column="order_num" />  
+        <result property="mv_action_id" column="mv_action_id" />  
+        <result property="user_id" column="user_id" /> 
+        <result property="siteNum" column="site_num" /> 
+        <result property="number" column="number" /> 
+        <result property="status" column="status" /> 
+        <result property="createTime" column="createtime" />
+        <result property="updateTime" column="updatetime" />
+        <collection property="person" ofType="Person">
+			<id property="id" column="id" />  
+            <result property="user" column="user" />
+            <result property="username" column="username" /> 
+		</collection>
+        <collection property="movieaction" ofType="MovieAction">
+            <id property="id" column="id" />  
+            <result property="actionTime" column="action_time" /> 
+            <result property="movie_id" column="movie_id" /> 
+            <result property="hall_id" column="hall_id" /> 
+            <collection property="movie" ofType="Movie">
+            	<id property="id" column="id" />  
+            	<result property="name" column="name" /> 
+            	<result property="ticket_price" column="ticket_price" /> 
+            </collection>
+            <collection property="hall" ofType="Hall">
+            	<id property="id" column="id" />  
+            	<result property="hall_name" column="hall_name" /> 
+            </collection>
+        </collection>
+	</resultMap>
+
+	<!-- 根据分页数据start 和size查询数据 -->
+	<select id="getTicketInfo" resultMap="TicketInfoResultMap" parameterType="Map">
+		SELECT * FROM ticket t LEFT JOIN 
+		(SELECT movieaction.id,movieaction.action_time,movieaction.hall_id,movieaction.movie_id,movie.`name`,movie.ticket_price,hall.hall_name	FROM movieaction 
+		LEFT JOIN movie ON movieaction.movie_id = movie.id LEFT JOIN hall ON movieaction.hall_id = hall.id) ma ON t.mv_action_id = ma.id
+		LEFT JOIN person p on t.user_id=p.id
+		 <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+	</select>
+	
+	
+	<select id="getTicketInfoByUid" resultMap="TicketInfoResultMap" parameterType="Map">
+		SELECT * FROM ticket t LEFT JOIN 
+		(SELECT movieaction.id,movieaction.action_time,movieaction.hall_id,movieaction.movie_id,movie.`name`,movie.ticket_price,hall.hall_name	FROM movieaction 
+		LEFT JOIN movie ON movieaction.movie_id = movie.id LEFT JOIN hall ON movieaction.hall_id = hall.id) ma ON t.mv_action_id = ma.id
+		LEFT JOIN person p on t.user_id=p.id
+		 <if test="user_id!=null">
+            where t.user_id = #{user_id}
+        </if>
+        order by t.createtime desc
+	</select>
+	
+	<!-- 新增-->
+	<insert id="insertTicket" >
+		insert into ticket 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNum != null">
+                order_num,
+            </if>
+            <if test="mv_action_id != null">
+                mv_action_id,
+            </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="number != null">
+                number,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                createtime,
+            </if>
+            <if test="updateTime != null">
+                updatetime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNum != null">
+                #{orderNum},
+            </if>
+            <if test="mv_action_id != null">
+                #{mv_action_id},
+            </if>
+            <if test="user_id != null">
+                #{user_id},
+            </if>
+            <if test="number != null">
+                #{number},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+	</insert>
+
+	<!--根据主键删除一条数据 -->
+    <delete id="deleteTicketById" parameterType="java.lang.Integer">
+        delete from ticket
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+	<!--根据主键更新一条数据 -->
+    <update id="updateTicket">
+		update ticket 
+		<set>
+            <if test="orderNum != null">
+                order_num = #{orderNum,jdbcType=VARCHAR},
+            </if>
+            <if test="mv_action_id != null">
+                mv_action_id = #{mv_action_id,jdbcType=INTEGER},
+            </if>
+            <if test="user_id != null">
+                user_id = #{user_id,jdbcType=INTEGER},
+            </if>
+            <if test="number != null">
+                number = #{number,jdbcType=INTEGER},
+            </if>
+            <if test="stauts != null">
+                stauts = #{stauts,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                updatetime = #{updateTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+		where id=#{id, jdbcType=INTEGER}
+	</update>
+</mapper>
